@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: set up github container registry
-        run: echo ${{ github.token }} | docker login -u sarisia --pasword-stdin ghcr.io
+        run: echo ${{ github.token }} | docker login -u sarisia --password-stdin ghcr.io
       - name: build
         run: docker build -t ${{ env.IMAGE }} .
       - name: push
