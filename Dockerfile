@@ -98,6 +98,9 @@ RUN git clone https://github.com/uchan-nos/mikanos-build.git osbook
 RUN curl -L https://github.com/uchan-nos/mikanos-build/releases/download/v2.0/x86_64-elf.tar.gz \
   | tar xzvf - -C osbook/devenv
 
+# switch back to root
+USER root
+
 # add ~/osbook/devenv to PATH
 ENV PATH="/home/${USERNAME}/osbook/devenv:${PATH}"
 
