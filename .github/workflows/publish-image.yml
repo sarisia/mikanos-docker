@@ -1,0 +1,30 @@
+name: build and publish container image
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    tags-ignore:
+      - '**'
+    paths:
+      - 'Dockerfile'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE: ghcr.io/sarisia/mikanos:latest
+      DOCKER_BUILDKIT: 1
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up github container registry
+        run: echo ${{ github.token }} | docker login -u sarisia --pasword-stdin ghcr.io
+      - name: build
+        run: docker build -t ${{ env.IMAGE }} .
+      - name: push
+        run: docker push ${{ env.IMAGE }}
+      - uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: ghcr.io/sarisia/mikanos
+          
