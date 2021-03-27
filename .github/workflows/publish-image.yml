@@ -24,7 +24,7 @@ jobs:
       - name: push
         run: docker push ${{ env.IMAGE }}
       - uses: sarisia/actions-status-discord@v1
+        if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           title: ghcr.io/sarisia/mikanos
-          
