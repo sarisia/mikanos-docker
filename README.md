@@ -2,6 +2,8 @@
 
 [![build and publish container image](https://github.com/sarisia/mikanos-docker/actions/workflows/publish-image.yml/badge.svg)](https://github.com/sarisia/mikanos-docker/actions/workflows/publish-image.yml)
 
+![image](https://user-images.githubusercontent.com/33576079/112739400-29e73880-8faf-11eb-9f59-acca01470a62.png)
+
 [ゼロからのOS自作入門](https://zero.osdev.jp/) で開発するOS (MikanOS) の
 開発環境が設定された Docker イメージ.
 
