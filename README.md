@@ -10,7 +10,7 @@
 [github.com/uchan-nos/mikanos-build](https://github.com/uchan-nos/mikanos-build)
 リポジトリで解説されているツール, ファイルを収録しています.
 
-<!--zenn--->
+[Docker ではじめる "ゼロからのOS自作入門" | Zenn](https://zenn.dev/sarisia/articles/6b57ea835344b6)
 
 - :star: 最終章終了時のMikanOSのビルド, 実行を確認！ ([github.com/uchan-nos/mikanos](https://github.com/uchan-nos/mikanos))
 - :star: Docker Desktop for (Windows | Mac), Linux に対応！ (たぶん)
