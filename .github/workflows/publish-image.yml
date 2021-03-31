@@ -9,17 +9,18 @@ on:
     paths:
       - 'Dockerfile'
 
+env:
+  TARGET_IMAGE: ghcr.io/sarisia/mikanos
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      TARGET_IMAGE: ghcr.io/sarisia/mikanos:latest
     strategy:
       matrix:
         include:
-          - arch: linux/arm64
+          - arch: arm64
             base_image: ghcr.io/sarisia/vscode-dev-containers-multiarch/base:ubuntu-20.04
-          - arch: linux/amd64
+          - arch: amd64
             base_image: mcr.microsoft.com/vscode/devcontainers/base:ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -32,9 +33,29 @@ jobs:
         with:
           platforms: arm64
       - name: build
-        run: docker buildx build -t ${{ env.TARGET_IMAGE }} --platform ${{ matrix.arch }} --build-arg BASE_IMAGE=${{ matrix.base_image }} --push .
+        run: docker buildx build -t ${{ env.TARGET_IMAGE }}:${{ manifest.arch }} --platform linux/${{ matrix.arch }} --build-arg BASE_IMAGE=${{ matrix.base_image }} --push .
       - uses: sarisia/actions-status-discord@v1
         if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           title: ghcr.io/sarisia/mikanos (${{ matrix.arch }})
+
+  manifest:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: sarisia
+          password: ${{ github.token }}
+      - name: amend manifest
+        run: |
+          docker manifest create ${{ env.TARGET_IMAGE }}:latest \
+          --amend ${{ env.TARGET_IMAGE }}:arm64 \
+          --amend ${{ env.TARGET_IMAGE }}:amd64
+      - uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: ghcr.io/sarisia/mikanos (amend)
