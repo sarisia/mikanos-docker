@@ -12,19 +12,27 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      IMAGE: ghcr.io/sarisia/mikanos:latest
-      DOCKER_BUILDKIT: 1
+    strategy:
+      matrix:
+        include:
+          - arch: linux/amd64
+            base_image: ghcr.io/sarisia/vscode-dev-containers/base:ubuntu-20.04
+          - arch: linux/arm64
+            base_image: mcr.microsoft.com/vscode/devcontainers/base:ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - name: set up github container registry
-        run: echo ${{ github.token }} | docker login -u sarisia --password-stdin ghcr.io
+      - uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: sarisia
+          password: ${{ github.token }}
+      - uses: docker/setup-qemu-action@v1
+        with:
+          platforms: arm64
       - name: build
-        run: docker build -t ${{ env.IMAGE }} .
-      - name: push
-        run: docker push ${{ env.IMAGE }}
+        run: docker buildx build -t ${{ matrix.arch }} --platform ${{ matrix.arch }} --bulid-arg BASE_IMAGE=${{ matrix.base_image }} --push .
       - uses: sarisia/actions-status-discord@v1
         if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          title: ghcr.io/sarisia/mikanos
+          title: ghcr.io/sarisia/mikanos (${{ matrix.arch }})

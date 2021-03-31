@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-20.04
+ARG BASE_IMAGE=mcr.microsoft.com/vscode/devcontainers/base:ubuntu-20.04
+FROM ${BASE_IMAGE}
 
 ARG USERNAME=vscode
 
