@@ -12,6 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      TARGET_IMAGE: ghcr.io/sarisia/mikanos:latest
     strategy:
       matrix:
         include:
@@ -30,7 +32,7 @@ jobs:
         with:
           platforms: arm64
       - name: build
-        run: docker buildx build -t ${{ matrix.arch }} --platform ${{ matrix.arch }} --build-arg BASE_IMAGE=${{ matrix.base_image }} --push .
+        run: docker buildx build -t ${{ env.TARGET_IMAGE }} --platform ${{ matrix.arch }} --build-arg BASE_IMAGE=${{ matrix.base_image }} --push .
       - uses: sarisia/actions-status-discord@v1
         if: always()
         with:
