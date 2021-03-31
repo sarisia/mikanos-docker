@@ -53,7 +53,8 @@ jobs:
         run: |
           docker manifest create ${{ env.TARGET_IMAGE }}:latest \
           --amend ${{ env.TARGET_IMAGE }}:arm64 \
-          --amend ${{ env.TARGET_IMAGE }}:amd64
+          --amend ${{ env.TARGET_IMAGE }}:amd64 && \
+          docker manifest push ${{ env.TARGET_IMAGE }}:latest
       - uses: sarisia/actions-status-discord@v1
         if: always()
         with:
