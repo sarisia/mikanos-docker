@@ -33,7 +33,7 @@ jobs:
         with:
           platforms: arm64
       - name: build
-        run: docker buildx build -t ${{ env.TARGET_IMAGE }}:${{ manifest.arch }} --platform linux/${{ matrix.arch }} --build-arg BASE_IMAGE=${{ matrix.base_image }} --push .
+        run: docker buildx build -t ${{ env.TARGET_IMAGE }}:${{ matrix.arch }} --platform linux/${{ matrix.arch }} --build-arg BASE_IMAGE=${{ matrix.base_image }} --push .
       - uses: sarisia/actions-status-discord@v1
         if: always()
         with:
