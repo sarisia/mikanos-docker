@@ -13,7 +13,7 @@
 [Docker ではじめる "ゼロからのOS自作入門" | Zenn](https://zenn.dev/sarisia/articles/6b57ea835344b6)
 
 - :star: 最終章終了時のMikanOSのビルド, 実行を確認！ ([github.com/uchan-nos/mikanos](https://github.com/uchan-nos/mikanos))
-- :star: Docker Desktop for (Windows | Mac), Linux に対応！ (たぶん)
+- :star: Docker for ( Windows (WSL2, Hyper-V) | Mac (Intel, M1) ), Linux に対応！ (たぶん)
 - :star: X11対応！ホストのX11 Serverに簡単接続！
 - :star: VSCode Devcontainer対応！ ([github.com/sarisia/mikanos-devcontainer](https://github.com/sarisia/mikanos-devcontainer))
 
@@ -35,33 +35,46 @@ VSCode Devcontainer を使うことで,
 
 ## コンテナイメージを直接起動
 
-1. イメージを取得
-
-```
-$ docker pull ghcr.io/sarisia/mikanos
-Using default tag: latest
-latest: Pulling from sarisia/mikanos
-...
-Digest: sha256:8ba82665f35c1212e98f8e03cdff806a152ac5a07ffdfbb1c4d55beff0492999
-Status: Downloaded newer image for ghcr.io/sarisia/mikanos:latest
-ghcr.io/sarisia/mikanos:latest
-```
-
-2. インタラクティブシェルを起動
-
 **`--privileged` をつけてください！ビルドスクリプトの `mount` ができません！**
 
 ```
 $ docker run --privileged -it ghcr.io/sarisia/mikanos /bin/bash
-docker run --privileged -it ghcr.io/sarisia/mikanos /bin/bash
 vscode ➜ ~ $ 
 ```
 
-3. 頑張る
-
-適宜コンテナ内で頑張ったりホストのディレクトリをマウントしたりしてお使いください.
+適宜コンテナ内で頑張ったり, ホストのディレクトリをマウントしたりしてお使いください.
 
 # FAQ
+
+## M1 Mac での動作は？
+
+多分できます (実機を持っていないので確認できていません).
+
+最新の [Docker Desktop for Mac Apple Silicon Tech Preview](https://docs.docker.com/docker-for-mac/apple-m1/) を
+導入し, コンテナ実行時に `--platform linux/amd64` を指定して実行してください:
+
+```
+$ docker run --platform linux/amd64 --privileged -it ghcr.io/sarisia/mikanos /bin/bash
+```
+
+<details>
+<summary>ネイティブイメージについて</summary>
+
+`ghcr.io/sarisia/mikanos:latest` はネイティブの `linux/arm64` イメージも持っていますが,
+いくつか問題があり, 推奨されません:
+
+- ベースイメージが異なる
+
+  本来のベースイメージ `mcr.microsoft.com/vscode/devcontainers/base:ubuntu-20.04` が `arm64`
+  イメージを提供していないため, 上記イメージの `Dockerfile` をセルフビルドしたイメージ
+  `ghcr.io/sarisia/vscode-dev-containers-multilarch:ubuntu-20.04` をベースイメージとしています.
+  
+- ブートローダのビルドが上手く行かない
+
+  EDK2 を用いた MikanLoaderPkg のビルド時に, `arm64` ホストで `amd64` アーキテクチャのバイナリを
+  ビルドするクロスコンパイルが行われますが, 設定が不十分でビルドが通りません. 誰か試して成功した人は
+  是非手順をご教示ください.
+</details>
 
 ## Linux ホストの X11 サーバに接続できない
 
