@@ -38,7 +38,7 @@ VSCode Devcontainer を使うことで,
 **`--privileged` をつけてください！ビルドスクリプトの `mount` ができません！**
 
 ```
-$ docker run --privileged -it ghcr.io/sarisia/mikanos /bin/bash
+$ docker run --privileged --user vscode -it ghcr.io/sarisia/mikanos /bin/bash
 vscode ➜ ~ $ 
 ```
 
@@ -54,7 +54,7 @@ vscode ➜ ~ $
 導入し, コンテナ実行時に `--platform linux/amd64` を指定して実行してください:
 
 ```
-$ docker run --platform linux/amd64 --privileged -it ghcr.io/sarisia/mikanos /bin/bash
+$ docker run --platform linux/amd64 --privileged -it --user vscode ghcr.io/sarisia/mikanos /bin/bash
 ```
 
 <details>
@@ -86,7 +86,7 @@ Linux ホストの Docker で実行する場合, 追加の設定が必要にな�
 Docker Engine 20.10 以降なら, `host.docker.internal` を手動でホストにマップできます:
 
 ```
-$ docker run --privileged -it --add-host=host.docker.internal:host-gateway ghcr.io/sarisia/mikanos /bin/bash
+$ docker run --privileged -it --user vscode --add-host=host.docker.internal:host-gateway ghcr.io/sarisia/mikanos /bin/bash
 ```
 
 ### DISPLAY を他に向ける
@@ -94,7 +94,7 @@ $ docker run --privileged -it --add-host=host.docker.internal:host-gateway ghcr.
 環境変数 `DISPLAY` を他に向ける方法もあります:
 
 ```
-$ docker run --privileged -it --network=host -e DISPLAY=$DISPLAY ghcr.io/sarisia/mikanos /bin/bash
+$ docker run --privileged -it --user vscode --network=host -e DISPLAY=$DISPLAY ghcr.io/sarisia/mikanos /bin/bash
 ```
 
 # ライセンス
