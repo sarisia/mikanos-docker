@@ -97,6 +97,15 @@ $ docker run --privileged -it --user vscode --add-host=host.docker.internal:host
 $ docker run --privileged -it --user vscode --network=host -e DISPLAY=$DISPLAY ghcr.io/sarisia/mikanos /bin/bash
 ```
 
+## WSLg での動作は？
+
+できます. [ドキュメント](https://github.com/microsoft/wslg) に従い WSLg を設定した後,
+X11 のソケットをコンテナ内にバインドして下さい:
+
+```
+$ docker run --privileged -it --user vscode --mount type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix ghcr.io/sarisia/mikanos /bin/bash
+```
+
 # ライセンス
 
 当 Dockerfile のライセンスは MIT です.
