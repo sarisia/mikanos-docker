@@ -18,8 +18,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - arch: arm64
-            base_image: ghcr.io/sarisia/vscode-dev-containers-multiarch/base:ubuntu-20.04
+          # - arch: arm64
+          #   base_image: ghcr.io/sarisia/vscode-dev-containers-multiarch/base:ubuntu-20.04
           - arch: amd64
             base_image: mcr.microsoft.com/vscode/devcontainers/base:ubuntu-20.04
     steps:
@@ -50,9 +50,13 @@ jobs:
           username: sarisia
           password: ${{ github.token }}
       - name: amend manifest
+        # run: |
+        #   docker manifest create ${{ env.TARGET_IMAGE }}:latest \
+        #   --amend ${{ env.TARGET_IMAGE }}:arm64 \
+        #   --amend ${{ env.TARGET_IMAGE }}:amd64 && \
+        #   docker manifest push ${{ env.TARGET_IMAGE }}:latest
         run: |
           docker manifest create ${{ env.TARGET_IMAGE }}:latest \
-          --amend ${{ env.TARGET_IMAGE }}:arm64 \
           --amend ${{ env.TARGET_IMAGE }}:amd64 && \
           docker manifest push ${{ env.TARGET_IMAGE }}:latest
       - uses: sarisia/actions-status-discord@v1
