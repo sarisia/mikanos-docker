@@ -1,0 +1,20 @@
+name: test image build (amd64 only)
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    tags-ignore:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: build
+        run: docker buildx build .
+      - uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: test ghcr.io/sarisia/mikanos
