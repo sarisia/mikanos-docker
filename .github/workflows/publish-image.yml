@@ -7,7 +7,7 @@ on:
     tags-ignore:
       - '**'
     paths:
-      - 'Dockerfile'
+      - '**/Dockerfile'
 
 env:
   TARGET_IMAGE: ghcr.io/sarisia/mikanos
