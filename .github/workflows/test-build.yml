@@ -12,6 +12,9 @@ jobs:
         arch: [amd64, arm64]
     steps:
       - uses: actions/checkout@v2
+      - uses: docker/setup-qemu-action@v1
+        with:
+          platforms: arm64
       - name: build
         run: docker buildx build ${{ matrix.arch }}
       - uses: sarisia/actions-status-discord@v1
