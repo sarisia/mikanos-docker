@@ -1,4 +1,4 @@
-name: test image build (amd64 only)
+name: test image build
 on:
   workflow_dispatch:
   pull_request:
@@ -7,12 +7,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [amd64, arm64]
     steps:
       - uses: actions/checkout@v2
       - name: build
-        run: docker buildx build .
+        run: docker buildx build ${{ matrix.arch }}
       - uses: sarisia/actions-status-discord@v1
         if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          title: test ghcr.io/sarisia/mikanos
+          title: test ghcr.io/sarisia/mikanos (${{ matrix.arch }})
