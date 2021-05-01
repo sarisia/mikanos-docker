@@ -16,12 +16,15 @@
 - :star: Docker for ( Windows (WSL2, Hyper-V) | Mac (Intel, M1) ), Linux に対応！ (たぶん)
 - :star: X11対応！ホストのX11 Serverに簡単接続！
 - :star: VSCode Devcontainer対応！ ([github.com/sarisia/mikanos-devcontainer](https://github.com/sarisia/mikanos-devcontainer))
+- :star: M1 Mac ネイティブ対応！ `arm64` イメージあります！
 
 # 配布している Docker イメージ
 
-| Image | Tags |
-| :---: | :--: |
-| `ghcr.io/sarisia/mikanos` | `latest` |
+| Image | Tags | Arch |
+| :---: | :--: | :---: |
+| `ghcr.io/sarisia/mikanos` | `latest` | `linux/amd64`, `linux/arm64` |
+| `ghcr.io/sarisia/mikanos` | `amd64` | `linux/amd64` |
+| `ghcr.io/sarisia/mikanos` | `arm64` | `linux/arm64` |
 
 # 使い方
 
@@ -48,32 +51,30 @@ vscode ➜ ~ $
 
 ## M1 Mac での動作は？
 
-多分できます (実機を持っていないので確認できていません).
+可能です. `linux/arm64` アーキテクチャに対応したイメージを用意しています.
 
-最新の [Docker Desktop for Mac Apple Silicon Tech Preview](https://docs.docker.com/docker-for-mac/apple-m1/) を
-導入し, コンテナ実行時に `--platform linux/amd64` を指定して実行してください:
+ただし, X64 向けにブートローダをビルドするため, クロスコンパイル関連の設定が必要です.
+[ゼロからのOS自作入門](https://zero.osdev.jp/) 2.2節で生成される `/$HOME/edk2/Conf/tools_def.txt`
+に対し, 当リポジトリの [`tools_def.txt.diff`](tools_def.txt.diff) を参考に, 設定を変更して下さい.
 
-```
-$ docker run --platform linux/amd64 --privileged -it --user vscode ghcr.io/sarisia/mikanos /bin/bash
-```
+その他の手順は, 書籍に従います.
 
 <details>
-<summary>ネイティブイメージについて</summary>
+<summary>エミュレータを用いた互換動作</summary>
 
-`ghcr.io/sarisia/mikanos:latest` はネイティブの `linux/arm64` イメージも持っていますが,
-いくつか問題があり, 推奨されません:
+書籍と違う設定を行うことに抵抗がある, もしくは難しいことを考えたくない場合は,
+明示的に `linux/amd64` イメージを互換レイヤを通して利用することが可能です.
 
-- ベースイメージが異なる
+ただし, 互換レイヤを通すことでパフォーマンスは大きく劣化し, コンパイル時や
+QEMU を用いたテスト動作時の速度は体感できるほどに遅くなります.
 
-  本来のベースイメージ `mcr.microsoft.com/vscode/devcontainers/base:ubuntu-20.04` が `arm64`
-  イメージを提供していないため, 上記イメージの `Dockerfile` をセルフビルドしたイメージ
-  `ghcr.io/sarisia/vscode-dev-containers-multilarch:ubuntu-20.04` をベースイメージとしています.
-  
-- ブートローダのビルドが上手く行かない
+互換レイヤを用いるには, `ghcr.io/sarisia/mikanos:amd64` イメージを取得した後,
+コンテナ実行時に `--platform linux/amd64` を指定して実行してください:
 
-  EDK2 を用いた MikanLoaderPkg のビルド時に, `arm64` ホストで `amd64` アーキテクチャのバイナリを
-  ビルドするクロスコンパイルが行われますが, 設定が不十分でビルドが通りません. 誰か試して成功した人は
-  是非手順をご教示ください.
+```
+$ docker run --platform linux/amd64 --privileged -it --user vscode ghcr.io/sarisia/mikanos:amd64 /bin/bash
+```
+
 </details>
 
 ## Linux ホストの X11 サーバに接続できない
