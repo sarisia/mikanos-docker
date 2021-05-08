@@ -110,3 +110,6 @@ ENV PATH="/home/${USERNAME}/osbook/devenv:${PATH}"
 
 # set X11 server address
 ENV DISPLAY=host.docker.internal:0
+
+# override startup command, taken from VSCode Devcontainer logs
+CMD ["/bin/sh", "-c", "echo Container started ; trap \"exit 0\" 15; while sleep 1 & wait $!; do :; done"]
