@@ -28,8 +28,10 @@ jobs:
       - uses: docker/setup-qemu-action@v1
         with:
           platforms: arm64
-      - name: build
-        run: docker buildx build -t ${{ env.TARGET_IMAGE }}:${{ matrix.arch }} --platform linux/${{ matrix.arch }} --build-arg BASE_IMAGE=${{ matrix.base_image }} --push ${{ matrix.arch }}
+      - name: build latest
+        run: docker buildx build -t ${{ env.TARGET_IMAGE }}:${{ matrix.arch }} --platform linux/${{ matrix.arch }} --push ${{ matrix.arch }}
+      - name: build variant/vnc
+        run: docker buildx build -t ${{ env.TARGET_IMAGE }}:vnc-${{ matrix.arch }} --platform linux/${{ matrix.arch }} --build-arg BASE=${{ env.TARGET_IMAGE }}:${{ matrix.arch }} --push variant/vnc
       - uses: sarisia/actions-status-discord@v1
         if: always()
         with:
@@ -45,12 +47,18 @@ jobs:
           registry: ghcr.io
           username: sarisia
           password: ${{ github.token }}
-      - name: amend manifest
+      - name: amend latest manifest
         run: |
           docker manifest create ${{ env.TARGET_IMAGE }}:latest \
           --amend ${{ env.TARGET_IMAGE }}:arm64 \
           --amend ${{ env.TARGET_IMAGE }}:amd64 && \
           docker manifest push ${{ env.TARGET_IMAGE }}:latest
+      - name: amend vnc manifest
+        run: |
+          docker manifest create ${{ env.TARGET_IMAGE }}:vnc \
+          --amend ${{ env.TARGET_IMAGE }}:vnc-arm64 \
+          --amend ${{ env.TARGET_IMAGE }}:vnc-amd64 && \
+          docker manifest push ${{ env.TARGET_IMAGE }}:vnc
       - uses: sarisia/actions-status-discord@v1
         if: always()
         with:
