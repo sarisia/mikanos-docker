@@ -17,8 +17,10 @@ jobs:
       - uses: docker/setup-qemu-action@v1
         with:
           platforms: arm64
-      - name: build
-        run: docker buildx build ${{ matrix.arch }}
+      - name: build latest
+        run: docker buildx build -t mikanos:latest ${{ matrix.arch }}
+      - name: build variant/vnc
+        run: docker buildx build -t mikanos:vnc --build-arg BASE=mikanos:latest variant/vnc
       - uses: sarisia/actions-status-discord@v1
         if: always()
         with:
