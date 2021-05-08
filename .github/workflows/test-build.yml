@@ -18,9 +18,9 @@ jobs:
         with:
           platforms: arm64
       - name: build latest
-        run: docker buildx build -t mikanos:latest ${{ matrix.arch }}
+        run: docker buildx build -t ghcr.io/sarisia/mikanos:latest ${{ matrix.arch }}
       - name: build variant/vnc
-        run: docker buildx build -t mikanos:vnc --build-arg BASE=mikanos:latest --pull=false variant/vnc
+        run: docker buildx build -t ghcr.io/sarisia/mikanos:vnc --build-arg BASE=ghcr.io/sarisia/mikanos:latest variant/vnc
       - uses: sarisia/actions-status-discord@v1
         if: always()
         with:
