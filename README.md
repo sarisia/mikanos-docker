@@ -70,7 +70,7 @@ noVNC のポートなどを変更する際は, 以下の環境変数を設定し
 | :---: | :---: | :---- |
 | `NOVNC_PORT` | `6080` | noVNC Webクライアントと WebSocket API のポート番号 |
 | `VNC_PORT` | `5900` | QEMU が待ち受ける VNC ポート番号. デフォルトでは `5900 + <ディスプレイ番号>` となります. 例えば, QEMU を `-vnc :1` オプションで起動した場合, `VNC_PORT` は `5901` です. |
-| (参考) `QEMU_OPTS` | | QEMU を実行する際の追加オプション. `~/osbook/devenv/run_image.sh` から展開されます. `-vnc :0` などと設定しておくと便利です. |
+| (参考) `QEMU_OPTS` | | QEMU を実行する際の追加オプション. `~/osbook/devenv/run_image.sh` 内で展開されます. `-vnc :0` などと設定しておくと便利です. |
 
 # FAQ
 
