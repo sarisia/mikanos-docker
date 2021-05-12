@@ -23,8 +23,7 @@
 | Image | Tags | Arch |
 | :---: | :--: | :---: |
 | `ghcr.io/sarisia/mikanos` | `latest` | `linux/amd64`, `linux/arm64` |
-| `ghcr.io/sarisia/mikanos` | `amd64` | `linux/amd64` |
-| `ghcr.io/sarisia/mikanos` | `arm64` | `linux/arm64` |
+| `ghcr.io/sarisia/mikanos` | `vnc` | `linux/amd64`, `linux/arm64` |
 
 # 使い方
 
@@ -46,6 +45,32 @@ vscode ➜ ~ $
 ```
 
 適宜コンテナ内で頑張ったり, ホストのディレクトリをマウントしたりしてお使いください.
+
+# VNC イメージについて
+
+`ghcr.io/sarisia/mikanos:vnc` イメージを提供しています. VNC イメージを利用することで,
+ホスト環境に X11 Server を用意することなく, MikanOS の動作確認をすることが可能です.
+また, [GitHub Codespaces](https://github.com/features/codespaces) を利用することで, ブラウザのみでコーディング&動作確認を
+完結することができます.
+
+## 使い方
+
+VSCode Devcontainer を推奨しています. 詳細は [mikanos-devcontainer](https://github.com/sarisia/mikanos-devcontainer#github-codespaces) の
+ドキュメントを参照して下さい.
+
+それ以外の場合は, 通常のイメージと同様の使い方が可能です. コンテナ起動時に自動で [noVNC](https://novnc.com/info.html) が
+起動し, コンテナ実行中は常に常駐します. QEMU を実行する際に, オプションとして `-vnc :0` を指定することで,
+ブラウザから `http://localhost:6080` を開いて動作確認ができます.
+
+## カスタマイズ
+
+noVNC のポートなどを変更する際は, 以下の環境変数を設定して下さい.
+
+| Environment Variable | Default | Note |
+| :---: | :---: | :---- |
+| `NOVNC_PORT` | `6080` | noVNC Webクライアントと WebSocket API のポート番号 |
+| `VNC_PORT` | `5900` | QEMU が待ち受ける VNC ポート番号. デフォルトでは `5900 + <ディスプレイ番号>` となります. 例えば, QEMU を `-vnc :1` オプションで起動した場合, `VNC_PORT` は `5901` です. |
+| (参考) `QEMU_OPTS` | | QEMU を実行する際の追加オプション. `~/osbook/devenv/run_image.sh` 内で展開されます. `-vnc :0` などと設定しておくと便利です. |
 
 # FAQ
 
