@@ -132,6 +132,22 @@ X11 のソケットをコンテナ内にバインドして下さい:
 $ docker run --privileged -it --user vscode --mount type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix ghcr.io/sarisia/mikanos /bin/bash
 ```
 
+## Docker Content Trust エラーで起動できない
+
+以下のようなエラーは Docker Content Trust (DCT) エラーです:
+
+```
+$ docker run --rm -it ghcr.io/sarisia/mikanos /bin/bash
+docker: Error: remote trust data does not exist for ghcr.io/sarisia/mikanos: ghcr.io does not have trust data for ghcr.io/sarisia/mikanos.
+```
+
+本イメージは DCT 署名を行っていません. 明示的に DCT を無効にしてください:
+
+```
+$ docker run --rm -it --disable-content-trust=true ghcr.io/sarisia/mikanos /bin/bash
+root ➜ /home/vscode $
+```
+
 # ライセンス
 
 当 Dockerfile のライセンスは MIT です.
