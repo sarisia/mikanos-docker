@@ -11,24 +11,6 @@ index 933b316..6cb8dcc 100755
  
  DEFINE CLANG38_WARNING_OVERRIDES    = -Wno-parentheses-equality -Wno-tautological-compare -Wno-tautological-constant-out-of-range-compare -Wno-empty-body -Wno-unused-const-variable -Wno-varargs -Wno-unknown-warning-option
  DEFINE CLANG38_ALL_CC_FLAGS         = DEF(GCC48_ALL_CC_FLAGS) DEF(CLANG38_WARNING_OVERRIDES) -fno-stack-protector -mms-bitfields -Wno-address -Wno-shift-negative-value -Wno-unknown-pragmas -Wno-incompatible-library-redeclaration -fno-asynchronous-unwind-tables -mno-sse -mno-mmx -msoft-float -mno-implicit-float  -ftrap-function=undefined_behavior_has_been_optimized_away_by_clang -funsigned-char -fno-ms-extensions -Wno-null-dereference
-@@ -2660,7 +2660,7 @@ NOOPT_CLANG38_IA32_DLINK2_FLAGS     = DEF(GCC5_IA32_DLINK2_FLAGS) -O0
- ##########################
- # CLANG38 X64 definitions
- ##########################
--*_CLANG38_X64_OBJCOPY_PATH         = objcopy
-+*_CLANG38_X64_OBJCOPY_PATH         = /usr/x86_64-linux-gnu/bin/objcopy
- *_CLANG38_X64_CC_PATH              = DEF(CLANG38_X64_PREFIX)clang
- *_CLANG38_X64_SLINK_PATH           = DEF(CLANG38_X64_PREFIX)llvm-ar
- *_CLANG38_X64_DLINK_PATH           = DEF(CLANG38_X64_PREFIX)clang
-@@ -2670,7 +2670,7 @@ NOOPT_CLANG38_IA32_DLINK2_FLAGS     = DEF(GCC5_IA32_DLINK2_FLAGS) -O0
- *_CLANG38_X64_VFRPP_PATH           = DEF(CLANG38_X64_PREFIX)clang
- *_CLANG38_X64_ASLCC_PATH           = DEF(CLANG38_X64_PREFIX)clang
- *_CLANG38_X64_ASLPP_PATH           = DEF(CLANG38_X64_PREFIX)clang
--*_CLANG38_X64_RC_PATH              = objcopy
-+*_CLANG38_X64_RC_PATH              = /usr/x86_64-linux-gnu/bin/objcopy
- 
- *_CLANG38_X64_ASLCC_FLAGS          = DEF(GCC_ASLCC_FLAGS) -m64 -fno-lto DEF(CLANG38_X64_TARGET)
- *_CLANG38_X64_ASLDLINK_FLAGS       = DEF(GCC5_IA32_X64_ASLDLINK_FLAGS) -Wl,-m,elf_x86_64
 @@ -2682,7 +2682,7 @@ NOOPT_CLANG38_IA32_DLINK2_FLAGS     = DEF(GCC5_IA32_DLINK2_FLAGS) -O0
  *_CLANG38_X64_ASLPP_FLAGS          = DEF(GCC_ASLPP_FLAGS) DEF(CLANG38_X64_TARGET)
  *_CLANG38_X64_VFRPP_FLAGS          = DEF(GCC_VFRPP_FLAGS) DEF(CLANG38_X64_TARGET)
