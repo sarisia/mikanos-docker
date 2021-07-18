@@ -85,7 +85,29 @@ RUN for item in \
         update-alternatives --install "/usr/bin/${item}" "${item}" "/usr/bin/${item}-7" 50 \
     ; done
 
+
+# switch to unprivileged
+USER ${USERNAME}
+WORKDIR /home/${USERNAME}
+
+# build EDK II
+RUN git clone --recursive https://github.com/tianocore/edk2.git edk2 \
+ && (cd edk2 && git checkout 38c8be123aced4cc8ad5c7e0da9121a181b94251) \
+ && make -C edk2/BaseTools/Source/C
+
+# clone mikanos devenv
+RUN git clone https://github.com/uchan-nos/mikanos-build.git osbook
+
+# download standard libraries
+RUN curl -L https://github.com/uchan-nos/mikanos-build/releases/download/v2.0/x86_64-elf.tar.gz \
+  | tar xzvf - -C osbook/devenv
+
+# switch back to root
+USER root
+
+
 # for cross compiler toolchain
+# this is so confusing for user...
 RUN for item in \
         addr2line \
         ar \
@@ -109,26 +131,6 @@ RUN for item in \
         update-alternatives --install "/usr/bin/${item}" "${item}" "/usr/bin/x86_64-linux-gnu-${item}" 50 \
     ; done
 
-
-# switch to unprivileged
-USER ${USERNAME}
-WORKDIR /home/${USERNAME}
-
-# build EDK II
-RUN git clone --recursive https://github.com/tianocore/edk2.git edk2 \
- && (cd edk2 && git checkout 38c8be123aced4cc8ad5c7e0da9121a181b94251) \
- && make -C edk2/BaseTools/Source/C
-#  && rm -rf edk2
-
-# clone mikanos devenv
-RUN git clone https://github.com/uchan-nos/mikanos-build.git osbook
-
-# download standard libraries
-RUN curl -L https://github.com/uchan-nos/mikanos-build/releases/download/v2.0/x86_64-elf.tar.gz \
-  | tar xzvf - -C osbook/devenv
-
-# switch back to root
-USER root
 
 # add ~/osbook/devenv to PATH
 ENV PATH="/home/${USERNAME}/osbook/devenv:${PATH}"
