@@ -85,6 +85,31 @@ RUN for item in \
         update-alternatives --install "/usr/bin/${item}" "${item}" "/usr/bin/${item}-7" 50 \
     ; done
 
+# for cross compiler toolchain
+RUN for item in \
+        addr2line \
+        ar \
+        as \
+        c++filt \
+        dwp \
+        elfedit \
+        gprof \
+        ld \
+        ld.bfd \
+        ld.gold \
+        nm \
+        objcopy \
+        objdump \
+        ranlib \
+        readelf \
+        size \
+        strings \
+        strip \
+    ; do \
+        update-alternatives --install "/usr/bin/${item}" "${item}" "/usr/bin/x86_64-linux-gnu-${item}" 50 \
+    ; done
+
+
 # switch to unprivileged
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}
