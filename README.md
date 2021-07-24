@@ -123,15 +123,6 @@ $ docker run --privileged -it --user vscode --add-host=host.docker.internal:host
 $ docker run --privileged -it --user vscode --network=host -e DISPLAY=$DISPLAY ghcr.io/sarisia/mikanos /bin/bash
 ```
 
-## WSLg での動作は？
-
-できます. [ドキュメント](https://github.com/microsoft/wslg) に従い WSLg を設定した後,
-X11 のソケットをコンテナ内にバインドして下さい:
-
-```
-$ docker run --privileged -it --user vscode --mount type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix ghcr.io/sarisia/mikanos /bin/bash
-```
-
 ## Docker Content Trust エラーで起動できない
 
 以下のようなエラーは Docker Content Trust (DCT) エラーです:
@@ -147,6 +138,22 @@ docker: Error: remote trust data does not exist for ghcr.io/sarisia/mikanos: ghc
 $ docker run --rm -it --disable-content-trust=true ghcr.io/sarisia/mikanos /bin/bash
 root ➜ /home/vscode $
 ```
+
+## QEMU がロゴから先に進まない
+
+たまに発生しますが, 原因はわかっていません.
+
+Docker コンテナを再作成することで復旧が可能です.
+
+## WSLg での動作は？
+
+正常な動作を確認しました. [ドキュメント](https://github.com/microsoft/wslg) に従い WSLg を設定した後,
+X11 のソケットをコンテナ内にバインドして下さい:
+
+```
+$ docker run --privileged -it --user vscode --mount type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix ghcr.io/sarisia/mikanos /bin/bash
+```
+
 
 # ライセンス
 
