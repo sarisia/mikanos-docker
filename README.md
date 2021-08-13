@@ -102,49 +102,6 @@ $ docker run --platform linux/amd64 --privileged -it --user vscode ghcr.io/saris
 
 </details>
 
-## Linux ホストの X11 サーバに接続できない
-
-このイメージはデフォルトで環境変数 `DISPLAY` を `host.docker.internal:0` に設定するため,
-Linux ホストの Docker で実行する場合, 追加の設定が必要になります.
-
-### `host.docker.internal` を手動でマップ
-
-Docker Engine 20.10 以降なら, `host.docker.internal` を手動でホストにマップできます:
-
-```
-$ docker run --privileged -it --user vscode --add-host=host.docker.internal:host-gateway ghcr.io/sarisia/mikanos /bin/bash
-```
-
-### DISPLAY を他に向ける
-
-環境変数 `DISPLAY` を他に向ける方法もあります:
-
-```
-$ docker run --privileged -it --user vscode --network=host -e DISPLAY=$DISPLAY ghcr.io/sarisia/mikanos /bin/bash
-```
-
-## Docker Content Trust エラーで起動できない
-
-以下のようなエラーは Docker Content Trust (DCT) エラーです:
-
-```
-$ docker run --rm -it ghcr.io/sarisia/mikanos /bin/bash
-docker: Error: remote trust data does not exist for ghcr.io/sarisia/mikanos: ghcr.io does not have trust data for ghcr.io/sarisia/mikanos.
-```
-
-本イメージは DCT 署名を行っていません. 明示的に DCT を無効にしてください:
-
-```
-$ docker run --rm -it --disable-content-trust=true ghcr.io/sarisia/mikanos /bin/bash
-root ➜ /home/vscode $
-```
-
-## QEMU がロゴから先に進まない
-
-たまに発生しますが, 原因はわかっていません.
-
-Docker コンテナを再作成することで復旧が可能です.
-
 ## WSLg での動作は？
 
 正常な動作を確認しました. [ドキュメント](https://github.com/microsoft/wslg) に従い WSLg を設定した後,
@@ -154,6 +111,9 @@ X11 のソケットをコンテナ内にバインドして下さい:
 $ docker run --privileged -it --user vscode --mount type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix ghcr.io/sarisia/mikanos /bin/bash
 ```
 
+# トラブルシューティング
+
+[Wiki をご確認ください.](https://github.com/sarisia/mikanos-docker/wiki/Troubleshooting)
 
 # ライセンス
 
