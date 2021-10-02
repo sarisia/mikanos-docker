@@ -18,7 +18,7 @@ jobs:
         with:
           message: 'update submodules'
       - name: kick image build workflow
-        if: ${{ steps.commit.outputs.changed }}
+        if: ${{ steps.commit.outputs.changed == true }}
         uses: benc-uk/workflow-dispatch@v1
         with:
           token: ${{ secrets.PAT }}
