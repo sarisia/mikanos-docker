@@ -24,6 +24,6 @@ jobs:
           token: ${{ secrets.PAT }}
           workflow: build and publish container image
       - uses: sarisia/actions-status-discord@v1
-        if: ${{ steps.commit.outputs.changed }}
+        if: ${{ steps.commit.outputs.changed == true }}
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
