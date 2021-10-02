@@ -1,0 +1,4 @@
+[submodule "mikanos-build"]
+	path = mikanos-build
+	url = https://github.com/uchan-nos/mikanos-build.git
+	branch = master
