@@ -21,14 +21,14 @@ jobs:
             runs-on: macos-14
     runs-on: ${{ matrix.runs-on }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: build
         run: |
           docker buildx build -t ${{ env.TARGET_IMAGE }}:${{ matrix.arch }} --platform linux/${{ matrix.arch }} ${{ matrix.arch }} && \
           docker buildx build -t ${{ env.TARGET_IMAGE }}:vnc-${{ matrix.arch }} --platform linux/${{ matrix.arch }} --build-arg BASE=${{ env.TARGET_IMAGE }}:${{ matrix.arch }} variant/vnc
       
-      - uses: docker/login-action@v1
+      - uses: docker/login-action@v3
         # run only when images are pushed
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         with:
