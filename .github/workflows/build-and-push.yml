@@ -10,18 +10,26 @@ on:
 env:
   TARGET_IMAGE: ghcr.io/sarisia/mikanos
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     strategy:
       matrix:
         include:
           - arch: amd64
-            runs-on: ubuntu-22.04
           - arch: arm64
-            runs-on: macos-14
-    runs-on: ${{ matrix.runs-on }}
+    # turns out macos-14 (m1) runner does not support nested virtualization (docker)
+    # see https://github.com/actions/runner-images/issues/9254#issuecomment-1917916016
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
+
+      - uses: docker/setup-qemu-action@v1
+        with:
+          platforms: arm64
 
       - name: build
         run: |
@@ -33,7 +41,7 @@ jobs:
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         with:
           registry: ghcr.io
-          username: sarisia
+          username: ${{ github.actor }}
           password: ${{ github.token }}
   
       - name: push
@@ -43,9 +51,24 @@ jobs:
           docker push ${{ env.TARGET_IMAGE }}:${{ matrix.arch }} && \
           docker push ${{ env.TARGET_IMAGE }}:vnc-${{ matrix.arch }}
 
-      - name: amend manifests
-        # run only when images are pushed
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+      - uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: ghcr.io/sarisia/mikanos (${{ matrix.arch }})
+
+  manifest:
+    runs-on: ubuntu-22.04
+    needs: build
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: amend manifest
         run: |
           docker manifest create ${{ env.TARGET_IMAGE }}:latest \
             --amend ${{ env.TARGET_IMAGE }}:arm64 \
@@ -60,4 +83,4 @@ jobs:
         if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          title: ghcr.io/sarisia/mikanos (${{ matrix.arch }})
+          title: ghcr.io/sarisia/mikanos (amend)
