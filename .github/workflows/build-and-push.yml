@@ -1,0 +1,63 @@
+name: build and publish container image
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    # every sunday 3:00 am jst
+    - cron: '0 18 * * 0'
+
+env:
+  TARGET_IMAGE: ghcr.io/sarisia/mikanos
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            runs-on: ubuntu-22.04
+          - arch: arm64
+            runs-on: macos-14
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: build
+        run: |
+          docker buildx build -t ${{ env.TARGET_IMAGE }}:${{ matrix.arch }} --platform linux/${{ matrix.arch }} ${{ matrix.arch }} && \
+          docker buildx build -t ${{ env.TARGET_IMAGE }}:vnc-${{ matrix.arch }} --platform linux/${{ matrix.arch }} --build-arg BASE=${{ env.TARGET_IMAGE }}:${{ matrix.arch }} variant/vnc
+      
+      - uses: docker/login-action@v1
+        # run only when images are pushed
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        with:
+          registry: ghcr.io
+          username: sarisia
+          password: ${{ github.token }}
+  
+      - name: push
+        # do not push when triggered by push
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          docker push ${{ env.TARGET_IMAGE }}:${{ matrix.arch }} && \
+          docker push ${{ env.TARGET_IMAGE }}:vnc-${{ matrix.arch }}
+
+      - name: amend manifests
+        # run only when images are pushed
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          docker manifest create ${{ env.TARGET_IMAGE }}:latest \
+            --amend ${{ env.TARGET_IMAGE }}:arm64 \
+            --amend ${{ env.TARGET_IMAGE }}:amd64 && \
+          docker manifest push ${{ env.TARGET_IMAGE }}:latest && \
+          docker manifest create ${{ env.TARGET_IMAGE }}:vnc \
+            --amend ${{ env.TARGET_IMAGE }}:vnc-arm64 \
+            --amend ${{ env.TARGET_IMAGE }}:vnc-amd64 && \
+          docker manifest push ${{ env.TARGET_IMAGE }}:vnc
+
+      - uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: ghcr.io/sarisia/mikanos (${{ matrix.arch }})
