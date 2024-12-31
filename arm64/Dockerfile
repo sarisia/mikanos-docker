@@ -91,9 +91,14 @@ USER ${USERNAME}
 WORKDIR /home/${USERNAME}
 
 # build EDK II
-RUN git clone --recursive https://github.com/tianocore/edk2.git edk2 \
- && (cd edk2 && git checkout --recurse-submodules 38c8be123aced4cc8ad5c7e0da9121a181b94251) \
- && make -C edk2/BaseTools/Source/C
+# 38c8be123aced4cc8ad5c7e0da9121a181b94251 is known latest good version
+RUN git init edk2 && \
+    cd edk2 && \
+    git remote add origin https://github.com/tianocore/edk2.git && \
+    git fetch --depth=1 --no-recurse-submodules origin 38c8be123aced4cc8ad5c7e0da9121a181b94251 && \
+    git checkout --no-recurse-submodules FETCH_HEAD && \
+    git submodule update --init --recursive --depth=1 && \
+    make -C BaseTools/Source/C
 
 # clone mikanos devenv
 RUN git clone https://github.com/uchan-nos/mikanos-build.git osbook
