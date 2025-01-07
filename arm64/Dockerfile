@@ -92,12 +92,14 @@ WORKDIR /home/${USERNAME}
 
 # build EDK II
 # 38c8be123aced4cc8ad5c7e0da9121a181b94251 is known latest good version
+# do not use --depth=1 since some git upstream does not support fetching single commit?
+# still dont get it why this only happens on arm64 and not amd64
 RUN git init edk2 && \
     cd edk2 && \
     git remote add origin https://github.com/tianocore/edk2.git && \
-    git fetch --depth=1 --no-recurse-submodules origin 38c8be123aced4cc8ad5c7e0da9121a181b94251 && \
-    git checkout --no-recurse-submodules FETCH_HEAD && \
-    git submodule update --init --recursive --depth=1 && \
+    git fetch --no-recurse-submodules origin 38c8be123aced4cc8ad5c7e0da9121a181b94251 && \
+    git checkout FETCH_HEAD && \
+    git submodule update --init --recursive && \
     make -C BaseTools/Source/C
 
 # clone mikanos devenv
