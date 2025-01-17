@@ -20,16 +20,12 @@ jobs:
       matrix:
         include:
           - arch: amd64
+            os: ubuntu-24.04
           - arch: arm64
-    # turns out macos-14 (m1) runner does not support nested virtualization (docker)
-    # see https://github.com/actions/runner-images/issues/9254#issuecomment-1917916016
-    runs-on: ubuntu-22.04
+            os: ubuntu-24.04-arm
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-
-      - uses: docker/setup-qemu-action@v3
-        with:
-          platforms: arm64
 
       - name: build
         run: |
@@ -58,7 +54,7 @@ jobs:
           title: ghcr.io/sarisia/mikanos (${{ matrix.arch }})
 
   manifest:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: build
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
