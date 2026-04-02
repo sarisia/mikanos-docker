@@ -25,14 +25,14 @@ jobs:
             os: ubuntu-24.04-arm
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: build
         run: |
           docker buildx build -t ${{ env.TARGET_IMAGE }}:${{ matrix.arch }} --platform linux/${{ matrix.arch }} ${{ matrix.arch }} && \
           docker buildx build -t ${{ env.TARGET_IMAGE }}:vnc-${{ matrix.arch }} --platform linux/${{ matrix.arch }} --build-arg BASE=${{ env.TARGET_IMAGE }}:${{ matrix.arch }} variant/vnc
       
-      - uses: docker/login-action@v3
+      - uses: docker/login-action@v4
         # run only when images are pushed
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         with:
@@ -58,7 +58,7 @@ jobs:
     needs: build
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
-      - uses: docker/login-action@v3
+      - uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
